@@ -11,7 +11,6 @@ not_quite_lisp :: proc() {
 		return
 	}
 	defer os.close(file)
-	fmt.printfln("OPEN FILE OK: {}", open_err)
 
 	bytes, read_err := os.read_entire_file_from_handle_or_err(file)
 	if read_err != nil {
@@ -19,13 +18,28 @@ not_quite_lisp :: proc() {
 		return
 	}
 	defer delete(bytes)
-	fmt.printfln("READ FILE OK: {}", read_err)
+
+	left_bracket_count: int
+	right_bracket_count: int
+	flor := 1
+	enterence: int
 
 	for byte, index in bytes {
-		if index % 32 == 0 {
-			fmt.printf("\n{}:\t", index)
+		if byte == '(' {
+			flor += 1
+			left_bracket_count += 1
 		}
-		fmt.printf("{} ", byte)
+		if byte == ')' {
+			flor -= 1
+			right_bracket_count += 1
+		}
+		if flor == 0 && enterence == 0 {
+			enterence = index + 1
+		}
 	}
+
+	fmt.println("--- Day 1: Not Quite Lisp ---")
+	fmt.printfln("pt1: {}", left_bracket_count - right_bracket_count)
+	fmt.printfln("pt2: {}", enterence)
 }
 
